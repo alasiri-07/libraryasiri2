@@ -4,502 +4,940 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>قائمتي - متتبع الوسائط الشخصي</title>
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts (Tajawal for Arabic) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- Custom Styles and Tailwind Configuration -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #fca311;
+            --info: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --background: #f5f7ff;
+            --card-bg: #ffffff;
+            --text: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         body {
-            font-family: 'Tajawal', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            padding-bottom: 60px;
         }
-        /* Custom scrollbar for a better look */
-        ::-webkit-scrollbar {
-            width: 8px;
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        ::-webkit-scrollbar-track {
-            background: #1f2937;
+
+        .app-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #4b5563;
-            border-radius: 10px;
+
+        .app-description {
+            font-size: 1rem;
+            opacity: 0.9;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #6b7280;
+
+        .categories {
+            display: flex;
+            overflow-x: auto;
+            padding: 1rem;
+            gap: 0.8rem;
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
-        /* Style for the active tab */
-        .tab-active {
-            border-color: #3b82f6;
-            color: #3b82f6;
-            background-color: rgba(59, 130, 246, 0.1);
+
+        .category-btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 50px;
+            background-color: #e9ecef;
+            color: var(--dark);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
         }
-        /* Simple transition for UI elements */
-        .transition-all {
-            transition: all 0.3s ease-in-out;
+
+        .category-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
+        }
+
+        .category-btn:hover:not(.active) {
+            background-color: #dee2e6;
+        }
+
+        .search-container {
+            padding: 1rem;
+            background-color: white;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 0.5rem;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .search-box i {
+            color: #6c757d;
+        }
+
+        .content {
+            padding: 0 1rem;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .item-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .item-image {
+            height: 180px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .item-details {
+            padding: 1rem;
+        }
+
+        .item-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-status {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-ongoing {
+            background-color: #e9f7ef;
+            color: #28a745;
+        }
+
+        .status-completed {
+            background-color: #e7f3ff;
+            color: #007bff;
+        }
+
+        .status-dropped {
+            background-color: #fee;
+            color: #dc3545;
+        }
+
+        .item-progress {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-rating {
+            display: flex;
+            align-items: center;
+            color: #ffc107;
+            font-weight: 500;
+        }
+
+        .add-btn {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+            border: none;
+            cursor: pointer;
+            z-index: 90;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2rem auto;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: white;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .detail-modal .modal-content {
+            max-width: 700px;
+        }
+
+        .detail-header {
+            position: relative;
+        }
+
+        .detail-image {
+            height: 250px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .detail-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .detail-body {
+            padding: 1.5rem;
+        }
+
+        .detail-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .detail-info-item {
+            margin-bottom: 0.8rem;
+        }
+
+        .detail-info-label {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: #6c757d;
+        }
+
+        .moments-list {
+            list-style: none;
+        }
+
+        .moment-item {
+            padding: 0.8rem;
+            border-left: 3px solid var(--primary);
+            background-color: #f8f9fa;
+            margin-bottom: 0.8rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .moment-chapter {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        @media (max-width: 768px) {
+            .items-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .detail-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 1rem auto;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200">
+<body>
+    <header>
+        <h1 class="app-title">قائمتي</h1>
+        <p class="app-description">منظم الوسائط والترفيه الشخصي</p>
+    </header>
 
-    <!-- Main Container -->
-    <div class="container mx-auto p-4 md:p-8">
+    <div class="categories">
+        <button class="category-btn active" data-category="all">الكل</button>
+        <button class="category-btn" data-category="novel">روايات</button>
+        <button class="category-btn" data-category="manga">مانجا/مانهوا</button>
+        <button class="category-btn" data-category="anime">انمي</button>
+        <button class="category-btn" data-category="movie">فيلم</button>
+        <button class="category-btn" data-category="series">مسلسل</button>
+        <button class="category-btn" data-category="book">كتاب</button>
+        <button class="category-btn" data-category="other">أخرى</button>
+    </div>
 
-        <!-- Header -->
-        <header class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-bold text-white">قائمتي</h1>
-            <p class="text-gray-400 mt-2">متتبع الوسائط الشخصي الخاص بك</p>
-        </header>
-
-        <!-- Category Tabs -->
-        <div class="mb-6">
-            <div class="border-b border-gray-700">
-                <nav id="category-tabs" class="-mb-px flex space-x-4 space-x-reverse overflow-x-auto pb-2" aria-label="Tabs">
-                    <!-- Tabs will be dynamically inserted here -->
-                </nav>
-            </div>
-        </div>
-        
-        <!-- Controls: Search and Add Button -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <div class="relative w-full md:w-1/3">
-                <input type="text" id="search-input" placeholder="ابحث في القائمة الحالية..." class="w-full bg-gray-800 border border-gray-700 rounded-lg py-2 px-4 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <span class="absolute inset-y-0 right-0 flex items-center pr-3">
-                    <svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
-                    </svg>
-                </span>
-            </div>
-            <button id="add-item-btn" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-all flex items-center justify-center gap-2">
-                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                </svg>
-                إضافة عمل جديد
-            </button>
-        </div>
-
-        <!-- Media Items Grid -->
-        <div id="items-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-            <!-- Media items will be dynamically inserted here -->
-        </div>
-        <div id="empty-state" class="text-center py-16 text-gray-500 hidden">
-            <p class="text-xl">لم تقم بإضافة أي أعمال في هذا القسم بعد.</p>
-            <p>انقر على "إضافة عمل جديد" للبدء!</p>
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-input" placeholder="ابحث في قائمتك...">
         </div>
     </div>
 
-    <!-- Add/Edit Item Modal -->
-    <div id="form-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden transition-all">
-        <div class="bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
-            <form id="item-form">
-                <input type="hidden" id="item-id">
-                <h2 id="modal-title" class="text-2xl font-bold mb-6 text-white">إضافة عمل جديد</h2>
-                
-                <!-- Form Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Name -->
-                    <div>
-                        <label for="item-name" class="block mb-2 text-sm font-medium text-gray-300">الاسم</label>
-                        <input type="text" id="item-name" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+    <div class="content">
+        <div class="items-grid" id="items-container">
+            <!-- العناصر سيتم إضافتها ديناميكياً -->
+        </div>
+    </div>
+
+    <button class="add-btn" id="add-item-btn">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Modal لإضافة عنصر جديد -->
+    <div class="modal" id="add-item-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">إضافة عنصر جديد</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-item-form">
+                    <div class="form-group">
+                        <label for="item-name" class="form-label">اسم العمل</label>
+                        <input type="text" id="item-name" class="form-control" required>
                     </div>
-                    <!-- Category -->
-                    <div>
-                        <label for="item-category" class="block mb-2 text-sm font-medium text-gray-300">القسم</label>
-                        <select id="item-category" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                            <!-- Options will be dynamically inserted -->
+                    <div class="form-group">
+                        <label for="item-category" class="form-label">القسم</label>
+                        <select id="item-category" class="form-select" required>
+                            <option value="novel">رواية</option>
+                            <option value="manga">مانجا/مانهوا</option>
+                            <option value="anime">انمي</option>
+                            <option value="movie">فيلم</option>
+                            <option value="series">مسلسل</option>
+                            <option value="book">كتاب</option>
+                            <option value="other">أخرى</option>
                         </select>
                     </div>
-                    <!-- Status -->
-                    <div>
-                        <label for="item-status" class="block mb-2 text-sm font-medium text-gray-300">الحالة</label>
-                        <select id="item-status" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="جاري">جاري</option>
-                            <option value="مكتمل">مكتمل</option>
-                            <option value="متوقف">متوقف</option>
-                            <option value="متروك">متروك</option>
-                            <option value="للمشاهدة">للمشاهدة/للقراءة</option>
+                    <div class="form-group">
+                        <label for="item-status" class="form-label">الحالة</label>
+                        <select id="item-status" class="form-select" required>
+                            <option value="watching">أخطط للمشاهدة</option>
+                            <option value="ongoing">جاري المشاهدة</option>
+                            <option value="completed">مكتمل</option>
+                            <option value="paused">متوقف</option>
+                            <option value="dropped">متروك</option>
                         </select>
                     </div>
-                    <!-- Progress -->
-                    <div>
-                        <label for="item-progress" class="block mb-2 text-sm font-medium text-gray-300">التقدم (آخر حلقة/فصل)</label>
-                        <input type="text" id="item-progress" placeholder="مثال: الفصل 120" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <div class="form-group">
+                        <label for="item-progress" class="form-label">التقدم (الفصل/الحلقة)</label>
+                        <input type="text" id="item-progress" class="form-control" placeholder="مثال: الفصل 120">
                     </div>
-                    <!-- Image URL -->
-                    <div class="md:col-span-2">
-                        <label for="item-image" class="block mb-2 text-sm font-medium text-gray-300">رابط الصورة</label>
-                        <input type="url" id="item-image" placeholder="https://example.com/image.jpg" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <div class="form-group">
+                        <label for="item-image" class="form-label">رابط الصورة</label>
+                        <input type="url" id="item-image" class="form-control" placeholder="https://example.com/image.jpg">
                     </div>
-                    <!-- Description -->
-                    <div class="md:col-span-2">
-                        <label for="item-description" class="block mb-2 text-sm font-medium text-gray-300">الوصف</label>
-                        <textarea id="item-description" rows="3" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    <div class="form-group">
+                        <label for="item-description" class="form-label">الوصف</label>
+                        <textarea id="item-description" class="form-control" rows="3"></textarea>
                     </div>
-                    <!-- Rating -->
-                    <div class="md:col-span-2">
-                        <label class="block mb-2 text-sm font-medium text-gray-300">التقييم</label>
-                        <div id="item-rating-stars" class="flex items-center" dir="ltr">
-                            <!-- Stars will be dynamically inserted -->
+                    <div class="form-group">
+                        <label for="item-rating" class="form-label">التقييم (من 10)</label>
+                        <input type="number" id="item-rating" class="form-control" min="0" max="10" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">لحظات مهمة</label>
+                        <div id="moments-container">
+                            <!-- اللحظات ستضاف هنا -->
                         </div>
-                        <input type="hidden" id="item-rating" value="0">
+                        <button type="button" id="add-moment-btn" class="btn btn-secondary" style="margin-top: 0.5rem;">
+                            <i class="fas fa-plus"></i> إضافة لحظة
+                        </button>
                     </div>
-                    <!-- Important Moments -->
-                    <div class="md:col-span-2">
-                        <h3 class="text-lg font-semibold mb-2 text-white">لحظات مهمة</h3>
-                        <div id="moments-container" class="space-y-2">
-                            <!-- Dynamic moment fields will be added here -->
-                        </div>
-                        <button type="button" id="add-moment-btn" class="mt-2 text-blue-500 hover:text-blue-400 text-sm">+ إضافة لحظة</button>
-                    </div>
-                </div>
-
-                <!-- Form Actions -->
-                <div class="flex justify-end gap-4 mt-8">
-                    <button type="button" id="cancel-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all">إلغاء</button>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all">حفظ</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- Details View Modal -->
-    <div id="details-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden transition-all">
-        <div class="bg-gray-800 rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <div id="details-content" class="p-6">
-                <!-- Details will be dynamically inserted here -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="close-modal">إلغاء</button>
+                <button class="btn btn-primary" id="save-item">حفظ</button>
             </div>
         </div>
     </div>
 
+    <!-- Modal لعرض التفاصيل -->
+    <div class="modal detail-modal" id="detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">تفاصيل العنصر</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="detail-header">
+                <img id="detail-image" class="detail-image" src="" alt="">
+                <h2 id="detail-title" class="detail-title"></h2>
+            </div>
+            <div class="detail-body">
+                <div class="detail-section">
+                    <h3 class="detail-section-title">معلومات عامة</h3>
+                    <div class="detail-info">
+                        <div class="detail-info-item">
+                            <div class="detail-info-label">القسم</div>
+                            <div id="detail-category"></div>
+                        </div>
+                        <div class="detail-info-item">
+                            <div class="detail-info-label">الحالة</div>
+                            <div id="detail-status"></div>
+                        </div>
+                        <div class="detail-info-item">
+                            <div class="detail-info-label">التقدم</div>
+                            <div id="detail-progress"></div>
+                        </div>
+                        <div class="detail-info-item">
+                            <div class="detail-info-label">التقييم</div>
+                            <div id="detail-rating"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h3 class="detail-section-title">الوصف</h3>
+                    <p id="detail-description"></p>
+                </div>
+                <div class="detail-section">
+                    <h3 class="detail-section-title">لحظات مهمة</h3>
+                    <ul id="detail-moments" class="moments-list">
+                        <!-- اللحظات ستضاف هنا -->
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="delete-item">حذف</button>
+                <button class="btn btn-primary" id="edit-item">تعديل</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- CONFIGURATION ---
-        const categories = {
-            'روايات': 'روايات',
-            'مانجا': 'مانجا/مانهوا',
-            'انمي': 'انمي',
-            'فيلم': 'فيلم',
-            'مسلسل': 'مسلسل',
-            'كتاب': 'كتاب',
-            'آخر': 'آخر'
-        };
-
-        // --- STATE MANAGEMENT ---
-        let mediaList = JSON.parse(localStorage.getItem('mediaList')) || [];
-        let currentCategory = Object.keys(categories)[0];
-        let currentSearchTerm = '';
-
-        // --- DOM ELEMENTS ---
-        const categoryTabsContainer = document.getElementById('category-tabs');
-        const itemsGrid = document.getElementById('items-grid');
-        const emptyState = document.getElementById('empty-state');
-        const searchInput = document.getElementById('search-input');
-        
-        // Modals
-        const formModal = document.getElementById('form-modal');
-        const detailsModal = document.getElementById('details-modal');
-        
-        // Form elements
-        const itemForm = document.getElementById('item-form');
-        const modalTitle = document.getElementById('modal-title');
-        const itemIdInput = document.getElementById('item-id');
-        const itemNameInput = document.getElementById('item-name');
-        const itemCategorySelect = document.getElementById('item-category');
-        const itemStatusSelect = document.getElementById('item-status');
-        const itemProgressInput = document.getElementById('item-progress');
-        const itemImageInput = document.getElementById('item-image');
-        const itemDescriptionTextarea = document.getElementById('item-description');
-        const itemRatingInput = document.getElementById('item-rating');
-        const ratingStarsContainer = document.getElementById('item-rating-stars');
-        const momentsContainer = document.getElementById('moments-container');
-
-        // --- FUNCTIONS ---
-
-        // Save data to localStorage
-        const saveData = () => {
-            localStorage.setItem('mediaList', JSON.stringify(mediaList));
-        };
-
-        // Render category tabs
-        const renderTabs = () => {
-            categoryTabsContainer.innerHTML = '';
-            for (const key in categories) {
-                const tab = document.createElement('a');
-                tab.href = '#';
-                tab.dataset.category = key;
-                tab.className = `whitespace-nowrap py-2 px-3 font-medium text-sm rounded-t-lg border-b-2 transition-all ${currentCategory === key ? 'tab-active' : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'}`;
-                tab.textContent = categories[key];
-                categoryTabsContainer.appendChild(tab);
-            }
-        };
-        
-        // Render rating stars (for both form and display)
-        const renderStars = (container, rating, isInteractive = false) => {
-            container.innerHTML = '';
-            for (let i = 1; i <= 10; i++) {
-                const star = document.createElement('span');
-                star.innerHTML = `<svg class="w-6 h-6 cursor-pointer" fill="${i <= rating ? '#facc15' : 'none'}" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.539 1.118l-3.975-2.888a1 1 0 00-1.176 0l-3.975 2.888c-.783.57-1.838-.196-1.539-1.118l1.518-4.674a1 1 0 00-.363-1.118L2.05 10.1c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.95-.69L11.049 2.927z"></path></svg>`;
-                star.dataset.value = i;
-                if (isInteractive) {
-                    star.onclick = () => {
-                        itemRatingInput.value = i;
-                        renderStars(container, i, true);
-                    };
-                }
-                container.appendChild(star);
-            }
-        };
-
-        // Render media items
-        const renderItems = () => {
-            itemsGrid.innerHTML = '';
-            const filteredList = mediaList
-                .filter(item => item.category === currentCategory)
-                .filter(item => item.name.toLowerCase().includes(currentSearchTerm.toLowerCase()));
-
-            if (filteredList.length === 0) {
-                emptyState.classList.remove('hidden');
-            } else {
-                emptyState.classList.add('hidden');
-            }
-
-            filteredList.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'bg-gray-800 rounded-lg overflow-hidden shadow-lg cursor-pointer transform hover:-translate-y-1 transition-all group';
-                card.dataset.id = item.id;
-
-                const ratingHtml = item.rating > 0 ? `<div class="absolute top-2 right-2 bg-yellow-500 text-gray-900 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
-                    <span>${item.rating}</span>
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                </div>` : '';
-
-                card.innerHTML = `
-                    <div class="relative">
-                        <img src="${item.image || 'https://placehold.co/400x600/1f2937/6b7280?text=No+Image'}" alt="${item.name}" class="w-full h-48 sm:h-64 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x600/1f2937/6b7280?text=No+Image';">
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all"></div>
-                        ${ratingHtml}
-                    </div>
-                    <div class="p-3">
-                        <h3 class="font-bold text-sm text-white truncate">${item.name}</h3>
-                        <p class="text-xs text-gray-400">${item.status}</p>
-                    </div>
-                `;
-                card.onclick = () => showDetailsModal(item.id);
-                itemsGrid.appendChild(card);
-            });
-        };
-        
-        // Open/Close Modals
-        const openModal = (modal) => modal.classList.remove('hidden');
-        const closeModal = (modal) => modal.classList.add('hidden');
-
-        // Show Add/Edit Form Modal
-        const showFormModal = (id = null) => {
-            itemForm.reset();
-            itemIdInput.value = id || '';
-            momentsContainer.innerHTML = '';
-
-            if (id) {
-                const item = mediaList.find(i => i.id === id);
-                modalTitle.textContent = 'تعديل العمل';
-                itemNameInput.value = item.name;
-                itemCategorySelect.value = item.category;
-                itemStatusSelect.value = item.status;
-                itemProgressInput.value = item.progress || '';
-                itemImageInput.value = item.image || '';
-                itemDescriptionTextarea.value = item.description || '';
-                itemRatingInput.value = item.rating || 0;
-                renderStars(ratingStarsContainer, item.rating || 0, true);
-                if (item.moments) {
-                    item.moments.forEach(moment => addMomentField(moment.point, moment.comment));
-                }
-            } else {
-                modalTitle.textContent = 'إضافة عمل جديد';
-                itemCategorySelect.value = currentCategory;
-                renderStars(ratingStarsContainer, 0, true);
-            }
-            openModal(formModal);
-        };
-        
-        // Show Details Modal
-        const showDetailsModal = (id) => {
-            const item = mediaList.find(i => i.id === id);
-            if (!item) return;
-
-            const detailsContent = document.getElementById('details-content');
+        document.addEventListener('DOMContentLoaded', function() {
+            // عناصر DOM
+            const itemsContainer = document.getElementById('items-container');
+            const addItemBtn = document.getElementById('add-item-btn');
+            const addItemModal = document.getElementById('add-item-modal');
+            const detailModal = document.getElementById('detail-modal');
+            const closeModalBtns = document.querySelectorAll('.close-btn, #close-modal');
+            const saveItemBtn = document.getElementById('save-item');
+            const addItemForm = document.getElementById('add-item-form');
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            const searchInput = document.getElementById('search-input');
+            const addMomentBtn = document.getElementById('add-moment-btn');
+            const momentsContainer = document.getElementById('moments-container');
+            const deleteItemBtn = document.getElementById('delete-item');
+            const editItemBtn = document.getElementById('edit-item');
             
-            let momentsHtml = '';
-            if (item.moments && item.moments.length > 0) {
-                momentsHtml = `
-                    <h4 class="text-lg font-semibold mt-4 mb-2 text-gray-300">لحظات مهمة</h4>
-                    <ul class="list-disc list-inside space-y-2 text-gray-400">
-                        ${item.moments.map(m => `<li><strong>${m.point}:</strong> ${m.comment}</li>`).join('')}
-                    </ul>
-                `;
-            }
+            // بيانات التطبيق
+            let mediaItems = JSON.parse(localStorage.getItem('mediaItems')) || [];
+            let currentCategory = 'all';
+            let currentItemId = null;
             
-            const ratingContainer = document.createElement('div');
-            renderStars(ratingContainer, item.rating, false);
-
-            detailsContent.innerHTML = `
-                <div class="flex justify-between items-start mb-4">
-                    <h2 class="text-3xl font-bold text-white">${item.name}</h2>
-                    <button id="close-details-btn" class="text-gray-400 hover:text-white">&times;</button>
-                </div>
-                <div class="flex flex-col md:flex-row gap-6">
-                    <div class="md:w-1/3 flex-shrink-0">
-                        <img src="${item.image || 'https://placehold.co/400x600/1f2937/6b7280?text=No+Image'}" alt="${item.name}" class="w-full rounded-lg shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/400x600/1f2937/6b7280?text=No+Image';">
-                    </div>
-                    <div class="md:w-2/3">
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="bg-blue-900 text-blue-300 text-xs font-medium px-2.5 py-0.5 rounded">${categories[item.category]}</span>
-                            <span class="bg-green-900 text-green-300 text-xs font-medium px-2.5 py-0.5 rounded">${item.status}</span>
-                            ${item.progress ? `<span class="bg-yellow-900 text-yellow-300 text-xs font-medium px-2.5 py-0.5 rounded">${item.progress}</span>` : ''}
-                        </div>
-                        <div class="flex items-center mb-4 gap-2">
-                            <strong class="text-gray-300">التقييم:</strong>
-                            <div class="flex">${ratingContainer.innerHTML}</div>
-                        </div>
-                        <p class="text-gray-400 mb-4">${item.description || 'لا يوجد وصف.'}</p>
-                        ${momentsHtml}
-                    </div>
-                </div>
-                <div class="flex justify-end gap-4 mt-6 border-t border-gray-700 pt-4">
-                    <button id="delete-item-btn" data-id="${item.id}" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">حذف</button>
-                    <button id="edit-item-btn" data-id="${item.id}" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">تعديل</button>
-                </div>
-            `;
-            
-            openModal(detailsModal);
-        };
-        
-        // Add a new moment field to the form
-        const addMomentField = (point = '', comment = '') => {
-            const div = document.createElement('div');
-            div.className = 'flex gap-2 items-center';
-            div.innerHTML = `
-                <input type="text" placeholder="فصل/دقيقة" value="${point}" class="moment-point w-1/3 bg-gray-600 border border-gray-500 rounded p-2 text-sm">
-                <input type="text" placeholder="تعليق" value="${comment}" class="moment-comment w-2/3 bg-gray-600 border border-gray-500 rounded p-2 text-sm">
-                <button type="button" class="remove-moment-btn text-red-500 hover:text-red-400">&times;</button>
-            `;
-            momentsContainer.appendChild(div);
-        };
-
-        // --- EVENT LISTENERS ---
-
-        // Category tab switching
-        categoryTabsContainer.addEventListener('click', (e) => {
-            if (e.target.tagName === 'A') {
-                e.preventDefault();
-                currentCategory = e.target.dataset.category;
-                renderTabs();
+            // تهيئة التطبيق
+            function initApp() {
                 renderItems();
-            }
-        });
-
-        // Search functionality
-        searchInput.addEventListener('keyup', (e) => {
-            currentSearchTerm = e.target.value;
-            renderItems();
-        });
-        
-        // Open form modal
-        document.getElementById('add-item-btn').addEventListener('click', () => showFormModal());
-
-        // Form submission (Add/Edit)
-        itemForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = itemIdInput.value;
-            const moments = [];
-            document.querySelectorAll('#moments-container .flex').forEach(row => {
-                const point = row.querySelector('.moment-point').value;
-                const comment = row.querySelector('.moment-comment').value;
-                if (point && comment) {
-                    moments.push({ point, comment });
-                }
-            });
-
-            const itemData = {
-                name: itemNameInput.value,
-                category: itemCategorySelect.value,
-                status: itemStatusSelect.value,
-                progress: itemProgressInput.value,
-                image: itemImageInput.value,
-                description: itemDescriptionTextarea.value,
-                rating: parseInt(itemRatingInput.value, 10),
-                moments: moments
-            };
-
-            if (id) { // Editing existing item
-                const index = mediaList.findIndex(i => i.id === id);
-                mediaList[index] = { ...mediaList[index], ...itemData };
-            } else { // Adding new item
-                mediaList.push({ id: Date.now().toString(), ...itemData });
-            }
-
-            saveData();
-            renderItems();
-            closeModal(formModal);
-        });
-
-        // Modal cancellation
-        document.getElementById('cancel-btn').addEventListener('click', () => closeModal(formModal));
-        formModal.addEventListener('click', (e) => {
-            if (e.target === formModal) closeModal(formModal);
-        });
-        
-        // Details modal actions (Edit, Delete, Close)
-        detailsModal.addEventListener('click', (e) => {
-            if (e.target === detailsModal) {
-                closeModal(detailsModal);
-            }
-            if (e.target.id === 'close-details-btn' || e.target.closest('#close-details-btn')) {
-                closeModal(detailsModal);
-            }
-            if (e.target.id === 'edit-item-btn') {
-                closeModal(detailsModal);
-                showFormModal(e.target.dataset.id);
-            }
-            if (e.target.id === 'delete-item-btn') {
-                if (confirm('هل أنت متأكد من أنك تريد حذف هذا العمل؟')) {
-                    const idToDelete = e.target.dataset.id;
-                    mediaList = mediaList.filter(item => item.id !== idToDelete);
-                    saveData();
-                    renderItems();
-                    closeModal(detailsModal);
-                }
-            }
-        });
-
-        // Add/Remove moment fields
-        document.getElementById('add-moment-btn').addEventListener('click', () => addMomentField());
-        momentsContainer.addEventListener('click', (e) => {
-            if (e.target.classList.contains('remove-moment-btn')) {
-                e.target.parentElement.remove();
-            }
-        });
-
-        // --- INITIALIZATION ---
-        const initialize = () => {
-            // Populate category select in form
-            for (const key in categories) {
-                const option = document.createElement('option');
-                option.value = key;
-                option.textContent = categories[key];
-                itemCategorySelect.appendChild(option);
+                setupEventListeners();
             }
             
-            renderTabs();
-            renderItems();
-        };
-
-        initialize();
-    });
+            // إعداد مستمعي الأحداث
+            function setupEventListeners() {
+                // فتح وإغلاق النماذج
+                addItemBtn.addEventListener('click', () => openModal(addItemModal));
+                closeModalBtns.forEach(btn => {
+                    btn.addEventListener('click', () => closeAllModals());
+                });
+                
+                // حفظ العنصر الجديد
+                saveItemBtn.addEventListener('click', saveItem);
+                
+                // التصنيفات والبحث
+                categoryBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        categoryBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        currentCategory = btn.dataset.category;
+                        renderItems();
+                    });
+                });
+                
+                searchInput.addEventListener('input', renderItems);
+                
+                // إضافة لحظات
+                addMomentBtn.addEventListener('click', addMomentField);
+                
+                // حذف وتعديل العناصر
+                deleteItemBtn.addEventListener('click', deleteCurrentItem);
+                editItemBtn.addEventListener('click', editCurrentItem);
+            }
+            
+            // عرض العناصر
+            function renderItems() {
+                const searchTerm = searchInput.value.toLowerCase();
+                let filteredItems = mediaItems;
+                
+                if (currentCategory !== 'all') {
+                    filteredItems = filteredItems.filter(item => item.category === currentCategory);
+                }
+                
+                if (searchTerm) {
+                    filteredItems = filteredItems.filter(item => 
+                        item.name.toLowerCase().includes(searchTerm) || 
+                        item.description.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                itemsContainer.innerHTML = '';
+                
+                if (filteredItems.length === 0) {
+                    itemsContainer.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #6c757d;">
+                            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <p>لا توجد عناصر في هذه القائمة</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                filteredItems.forEach(item => {
+                    const statusClass = getStatusClass(item.status);
+                    const statusText = getStatusText(item.status);
+                    
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'item-card';
+                    itemElement.innerHTML = `
+                        <img src="${item.image || 'https://via.placeholder.com/300x180?text=صورة+العمل'}" alt="${item.name}" class="item-image">
+                        <div class="item-details">
+                            <h3 class="item-title">${item.name}</h3>
+                            <span class="item-status ${statusClass}">${statusText}</span>
+                            <p class="item-progress">${item.progress || 'لا يوجد تقدم مسجل'}</p>
+                            <div class="item-rating">
+                                ${generateRatingStars(item.rating)}
+                                ${item.rating ? `<span>${item.rating}/10</span>` : '<span>لا يوجد تقييم</span>'}
+                            </div>
+                        </div>
+                    `;
+                    
+                    itemElement.addEventListener('click', () => openItemDetail(item.id));
+                    itemsContainer.appendChild(itemElement);
+                });
+            }
+            
+            // فتح تفاصيل العنصر
+            function openItemDetail(itemId) {
+                const item = mediaItems.find(i => i.id === itemId);
+                if (!item) return;
+                
+                currentItemId = itemId;
+                
+                // تعبئة البيانات في نموذج التفاصيل
+                document.getElementById('detail-title').textContent = item.name;
+                document.getElementById('detail-image').src = item.image || 'https://via.placeholder.com/700x250?text=صورة+العمل';
+                document.getElementById('detail-category').textContent = getCategoryText(item.category);
+                document.getElementById('detail-status').textContent = getStatusText(item.status);
+                document.getElementById('detail-progress').textContent = item.progress || 'لا يوجد';
+                document.getElementById('detail-rating').textContent = item.rating ? `${item.rating}/10` : 'لا يوجد';
+                document.getElementById('detail-description').textContent = item.description || 'لا يوجد وصف';
+                
+                // عرض اللحظات المهمة
+                const momentsList = document.getElementById('detail-moments');
+                momentsList.innerHTML = '';
+                
+                if (item.moments && item.moments.length > 0) {
+                    item.moments.forEach(moment => {
+                        const li = document.createElement('li');
+                        li.className = 'moment-item';
+                        li.innerHTML = `
+                            <div class="moment-chapter">${moment.chapter}</div>
+                            <div class="moment-note">${moment.note}</div>
+                        `;
+                        momentsList.appendChild(li);
+                    });
+                } else {
+                    momentsList.innerHTML = '<li>لا توجد لحظات مسجلة</li>';
+                }
+                
+                openModal(detailModal);
+            }
+            
+            // فتح النموذج
+            function openModal(modal) {
+                closeAllModals();
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // إغلاق جميع النماذج
+            function closeAllModals() {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+                document.body.style.overflow = 'auto';
+                addItemForm.reset();
+                momentsContainer.innerHTML = '';
+                currentItemId = null;
+            }
+            
+            // حفظ العنصر
+            function saveItem() {
+                const name = document.getElementById('item-name').value;
+                const category = document.getElementById('item-category').value;
+                const status = document.getElementById('item-status').value;
+                const progress = document.getElementById('item-progress').value;
+                const image = document.getElementById('item-image').value;
+                const description = document.getElementById('item-description').value;
+                const rating = document.getElementById('item-rating').value;
+                
+                if (!name) {
+                    alert('يرجى إدخال اسم العمل');
+                    return;
+                }
+                
+                // جمع اللحظات المهمة
+                const moments = [];
+                const momentInputs = momentsContainer.querySelectorAll('.moment-input');
+                momentInputs.forEach(input => {
+                    const chapter = input.querySelector('.moment-chapter').value;
+                    const note = input.querySelector('.moment-note').value;
+                    if (chapter || note) {
+                        moments.push({ chapter, note });
+                    }
+                });
+                
+                const newItem = {
+                    id: currentItemId || Date.now().toString(),
+                    name,
+                    category,
+                    status,
+                    progress,
+                    image,
+                    description,
+                    rating: rating ? parseFloat(rating) : null,
+                    moments
+                };
+                
+                if (currentItemId) {
+                    // تعديل العنصر الحالي
+                    const index = mediaItems.findIndex(item => item.id === currentItemId);
+                    if (index !== -1) {
+                        mediaItems[index] = newItem;
+                    }
+                } else {
+                    // إضافة عنصر جديد
+                    mediaItems.push(newItem);
+                }
+                
+                // حفظ في localStorage
+                localStorage.setItem('mediaItems', JSON.stringify(mediaItems));
+                
+                // إعادة عرض العناصر وإغلاق النموذج
+                renderItems();
+                closeAllModals();
+            }
+            
+            // إضافة حقل لحظة جديدة
+            function addMomentField() {
+                const momentDiv = document.createElement('div');
+                momentDiv.className = 'moment-input';
+                momentDiv.innerHTML = `
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <input type="text" class="form-control moment-chapter" placeholder="الفصل أو اللحظة">
+                        <button type="button" class="btn btn-danger remove-moment">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <textarea class="form-control moment-note" placeholder="ملاحظاتك عن هذه اللحظة" rows="2"></textarea>
+                `;
+                
+                momentDiv.querySelector('.remove-moment').addEventListener('click', () => {
+                    momentsContainer.removeChild(momentDiv);
+                });
+                
+                momentsContainer.appendChild(momentDiv);
+            }
+            
+            // حذف العنصر الحالي
+            function deleteCurrentItem() {
+                if (!currentItemId) return;
+                
+                if (confirm('هل أنت متأكد من أنك تريد حذف هذا العنصر؟')) {
+                    mediaItems = mediaItems.filter(item => item.id !== currentItemId);
+                    localStorage.setItem('mediaItems', JSON.stringify(mediaItems));
+                    renderItems();
+                    closeAllModals();
+                }
+            }
+            
+            // تعديل العنصر الحالي
+            function editCurrentItem() {
+                if (!currentItemId) return;
+                
+                const item = mediaItems.find(i => i.id === currentItemId);
+                if (!item) return;
+                
+                // تعبئة النموذج ببيانات العنصر
+                document.getElementById('item-name').value = item.name;
+                document.getElementById('item-category').value = item.category;
+                document.getElementById('item-status').value = item.status;
+                document.getElementById('item-progress').value = item.progress || '';
+                document.getElementById('item-image').value = item.image || '';
+                document.getElementById('item-description').value = item.description || '';
+                document.getElementById('item-rating').value = item.rating || '';
+                
+                // تعبئة اللحظات المهمة
+                momentsContainer.innerHTML = '';
+                if (item.moments && item.moments.length > 0) {
+                    item.moments.forEach(moment => {
+                        const momentDiv = document.createElement('div');
+                        momentDiv.className = 'moment-input';
+                        momentDiv.innerHTML = `
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <input type="text" class="form-control moment-chapter" placeholder="الفصل أو اللحظة" value="${moment.chapter || ''}">
+                                <button type="button" class="btn btn-danger remove-moment">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <textarea class="form-control moment-note" placeholder="ملاحظاتك عن هذه اللحظة" rows="2">${moment.note || ''}</textarea>
+                        `;
+                        
+                        momentDiv.querySelector('.remove-moment').addEventListener('click', () => {
+                            momentsContainer.removeChild(momentDiv);
+                        });
+                        
+                        momentsContainer.appendChild(momentDiv);
+                    });
+                }
+                
+                // الانتقال إلى نموذج الإضافة/التعديل
+                closeAllModals();
+                openModal(addItemModal);
+            }
+            
+            // وظائف مساعدة
+            function getStatusClass(status) {
+                switch(status) {
+                    case 'ongoing': return 'status-ongoing';
+                    case 'completed': return 'status-completed';
+                    case 'dropped': return 'status-dropped';
+                    default: return '';
+                }
+            }
+            
+            function getStatusText(status) {
+                switch(status) {
+                    case 'watching': return 'أخطط للمشاهدة';
+                    case 'ongoing': return 'جاري المشاهدة';
+                    case 'completed': return 'مكتمل';
+                    case 'paused': return 'متوقف';
+                    case 'dropped': return 'متروك';
+                    default: return status;
+                }
+            }
+            
+            function getCategoryText(category) {
+                switch(category) {
+                    case 'novel': return 'رواية';
+                    case 'manga': return 'مانجا/مانهوا';
+                    case 'anime': return 'انمي';
+                    case 'movie': return 'فيلم';
+                    case 'series': return 'مسلسل';
+                    case 'book': return 'كتاب';
+                    case 'other': return 'أخرى';
+                    default: return category;
+                }
+            }
+            
+            function generateRatingStars(rating) {
+                if (!rating) return '';
+                
+                let stars = '';
+                const fullStars = Math.floor(rating / 2);
+                const halfStar = rating % 2 >= 1;
+                
+                for (let i = 0; i < 5; i++) {
+                    if (i < fullStars) {
+                        stars += '<i class="fas fa-star"></i>';
+                    } else if (i === fullStars && halfStar) {
+                        stars += '<i class="fas fa-star-half-alt"></i>';
+                    } else {
+                        stars += '<i class="far fa-star"></i>';
+                    }
+                }
+                
+                return stars;
+            }
+            
+            // بدء التطبيق
+            initApp();
+        });
     </script>
 </body>
 </html>
